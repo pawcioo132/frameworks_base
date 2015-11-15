@@ -57,6 +57,14 @@ public class BassBoost extends AudioEffect {
     /**
      * Indicates if strength parameter is supported by the bass boost engine
      */
+
+    /**
+     * Bass boost center frequency. Paremeter ID for
+     * {@link android.media.audiofx.BassBoost.OnParameterChangeListener}
+     * @hide
+     */
+    public static final int PARAM_CENTER_FREQUENCY = 2;
+
     private boolean mStrengthSupported = false;
 
     /**
@@ -106,12 +114,6 @@ public class BassBoost extends AudioEffect {
      * Indicates whether setting strength is supported. If this method returns false, only one
      * strength is supported and the setStrength() method always rounds to that value.
      * @return true is strength parameter is supported, false otherwise
-     */
-    public boolean getStrengthSupported() {
-       return mStrengthSupported;
-    }
-
-    /**
      * Sets the strength of the bass boost effect. If the implementation does not support per mille
      * accuracy for setting the strength, it is allowed to round the given strength to the nearest
      * supported value. You can use the {@link #getRoundedStrength()} method to query the
@@ -122,6 +124,29 @@ public class BassBoost extends AudioEffect {
      * @throws IllegalArgumentException
      * @throws UnsupportedOperationException
      */
+    public boolean getStrengthSupported() {
+       return mStrengthSupported;
+    }
+
+
+
+    /**
+     * Sets the center frequency of the bass boost effect.
+     * @param freq The frequency, in Hz. The valid range for the freq is [20,500]
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
+     * @hide
+     */
+    public void setCenterFrequency(short freq)
+    throws IllegalStateException, IllegalArgumentException, UnsupportedOperationException {
+        try {
+            checkStatus(setParameter(PARAM_CENTER_FREQUENCY, freq));
+        } catch(IllegalArgumentException e) {
+            // ignore
+        }
+    }
+
     public void setStrength(short strength)
     throws IllegalStateException, IllegalArgumentException, UnsupportedOperationException {
         checkStatus(setParameter(PARAM_STRENGTH, strength));
@@ -141,22 +166,25 @@ public class BassBoost extends AudioEffect {
         checkStatus(getParameter(PARAM_STRENGTH, value));
         return value[0];
     }
+
     /**
-     * Sets the center frequency of the bass boost effect.
-     * @param freq The frequency, in Hz. The valid range for the freq is [20,500]
+     * Gets the current center frequency of the effect
+     * @return the center frequency of the effect. The valid range is [20,500], in Hertz
      * @throws IllegalStateException
      * @throws IllegalArgumentException
      * @throws UnsupportedOperationException
      * @hide
      */
-    public void setCenterFrequency(short freq)
-    throws IllegalStateException, IllegalArgumentException, UnsupportedOperationException {
+    public short getCenterFrequency() {
         try {
-            checkStatus(setParameter(PARAM_CENTER_FREQUENCY, freq));
+            short[] value = new short[1];
+            checkStatus(getParameter(PARAM_CENTER_FREQUENCY, value));
+            return value[0];
         } catch(IllegalArgumentException e) {
-            // ignore
+            return 55;
         }
     }
+
 
     /**
      * The OnParameterChangeListener interface defines a method called by the BassBoost when a
