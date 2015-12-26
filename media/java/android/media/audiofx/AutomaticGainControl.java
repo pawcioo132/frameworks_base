@@ -70,7 +70,6 @@ public class AutomaticGainControl extends AudioEffect {
             Log.w(TAG, "not enough memory");
         }
             return agc;
-        }
     }
 
     /**
